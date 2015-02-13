@@ -46,8 +46,8 @@ By default this codelab runs upon the Illumina Platinum Genomes Variants. Update
 #sampleData <- read.csv("http://storage.googleapis.com/genomics-public-data/platinum-genomes/other/platinum_genomes_sample_info.csv")
 #sampleInfo <- select(sampleData, call_call_set_name=Catalog.ID, gender=Gender)
 
-tableReplacement <- list("_THE_TABLE_"="google.com:biggene:test.pgp_masterVar_20150205",
-                         "_THE_EXPANDED_TABLE_"="google.com:biggene:test.pgp_masterVar_20150205_expanded")
+tableReplacement <- list("_THE_TABLE_"="google.com:biggene:test.pgp_variants_20150205",
+                         "_THE_EXPANDED_TABLE_"="google.com:biggene:test.pgp_variants_20150205_expanded")
 sampleData <- read.csv(textConnection(getURL("https://my.pgp-hms.org/google_surveys/1/download")))
 sampleInfo <- select(sampleData, call_call_set_name=Participant, gender=Sex.Gender)
 ```

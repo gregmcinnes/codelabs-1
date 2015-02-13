@@ -28,7 +28,7 @@ The following example makes use of [Illumina Platinum Genomes](http://www.illumi
 # Change the table here if you wish to run these queries against a different table.
 #tableReplacement <- list("_THE_TABLE_"="genomics-public-data:platinum_genomes.variants")
 
-tableReplacement <- list("_THE_TABLE_"="google.com:biggene:test.pgp_masterVar_20150205")
+tableReplacement <- list("_THE_TABLE_"="google.com:biggene:test.pgp_variants_20150205")
 ```
 
 ## Variants
@@ -54,7 +54,7 @@ SELECT
   GROUP_CONCAT(names) WITHIN RECORD AS names,
   COUNT(call.call_set_name) WITHIN RECORD AS num_samples,
 FROM
-  [google.com:biggene:test.pgp_masterVar_20150205]
+  [google.com:biggene:test.pgp_variants_20150205]
 WHERE
   reference_name = 'chr17'
   AND start BETWEEN 41196311
@@ -63,12 +63,13 @@ OMIT RECORD IF EVERY(alternate_bases IS NULL)
 ORDER BY
   start,
   alternate_bases
+Running query:   RUNNING  2.6s
 ```
 Number of rows returned by this query: 1186.
 
 Displaying the first few rows of the dataframe of results:
 <!-- html table generated in R 3.1.1 by xtable 1.7-4 package -->
-<!-- Fri Feb 13 10:12:44 2015 -->
+<!-- Fri Feb 13 10:30:38 2015 -->
 <table border=1>
 <tr> <th> reference_name </th> <th> start </th> <th> end </th> <th> reference_bases </th> <th> alternate_bases </th> <th> quality </th> <th> filter </th> <th> names </th> <th> num_samples </th>  </tr>
   <tr> <td> chr17 </td> <td align="right"> 41196362 </td> <td align="right"> 41196363 </td> <td> C </td> <td> T </td> <td align="right"> 0.00 </td> <td>  </td> <td> dbsnp.117:rs8176320,dbsnp.117:rs8176320 </td> <td align="right">   6 </td> </tr>
@@ -76,7 +77,7 @@ Displaying the first few rows of the dataframe of results:
   <tr> <td> chr17 </td> <td align="right"> 41196407 </td> <td align="right"> 41196407 </td> <td>  </td> <td> G </td> <td align="right"> 0.00 </td> <td>  </td> <td>  </td> <td align="right">   1 </td> </tr>
   <tr> <td> chr17 </td> <td align="right"> 41196821 </td> <td align="right"> 41196823 </td> <td> TT </td> <td> ?T </td> <td align="right"> 0.00 </td> <td>  </td> <td> dbsnp.126:rs33947868;dbsnp.129:rs60038333;dbsnp.130:rs68017638,dbsnp.126:rs33947868;dbsnp.129:rs60038333;dbsnp.130:rs68017638 </td> <td align="right">   4 </td> </tr>
   <tr> <td> chr17 </td> <td align="right"> 41196821 </td> <td align="right"> 41196823 </td> <td> TT </td> <td> ?TT </td> <td align="right"> 0.00 </td> <td>  </td> <td> dbsnp.126:rs33947868;dbsnp.129:rs60038333;dbsnp.130:rs68017638 </td> <td align="right">   3 </td> </tr>
-  <tr> <td> chr17 </td> <td align="right"> 41196821 </td> <td align="right"> 41196824 </td> <td> TTT </td> <td> T </td> <td align="right"> 0.00 </td> <td>  </td> <td> dbsnp.126:rs33947868;dbsnp.129:rs60038333;dbsnp.130:rs68017638,dbsnp.126:rs33947868;dbsnp.129:rs60038333;dbsnp.130:rs68017638 </td> <td align="right">   4 </td> </tr>
+  <tr> <td> chr17 </td> <td align="right"> 41196821 </td> <td align="right"> 41196823 </td> <td> TT </td> <td> T </td> <td align="right"> 0.00 </td> <td>  </td> <td> dbsnp.126:rs33947868;dbsnp.129:rs60038333;dbsnp.130:rs68017638,dbsnp.126:rs33947868;dbsnp.129:rs59541324;dbsnp.129:rs60038333;dbsnp.130:rs68017638,dbsnp.126:rs33947868;dbsnp.129:rs60038333;dbsnp.130:rs68017638,dbsnp.126:rs33947868;dbsnp.129:rs59541324;dbsnp.129:rs60038333;dbsnp.130:rs68017638 </td> <td align="right">   6 </td> </tr>
    </table>
 
 ## Non-Variant Segments
@@ -101,7 +102,7 @@ SELECT
   call.call_set_name,
   GROUP_CONCAT(STRING(call.genotype)) WITHIN call AS genotype,
 FROM
-  [google.com:biggene:test.pgp_masterVar_20150205]
+  [google.com:biggene:test.pgp_variants_20150205]
 WHERE
   reference_name = 'chr17'
   AND start BETWEEN 41196311
@@ -110,13 +111,14 @@ OMIT RECORD IF SOME(alternate_bases IS NOT NULL)
 ORDER BY
   start,
   call.call_set_name
-Retrieving data:  2.9sRetrieving data:  5.4sRetrieving data:  8.9sRetrieving data: 11.3sRetrieving data: 14.4sRetrieving data: 19.9s
+Running query:   RUNNING  2.3sRunning query:   RUNNING  3.0sRunning query:   RUNNING  3.6s
+Retrieving data:  7.3sRetrieving data: 11.7sRetrieving data: 15.8sRetrieving data: 20.8sRetrieving data: 26.6sRetrieving data: 30.6s
 ```
 Number of rows returned by this query: 63694.
 
 Displaying the first few rows of the dataframe of results:
 <!-- html table generated in R 3.1.1 by xtable 1.7-4 package -->
-<!-- Fri Feb 13 10:13:10 2015 -->
+<!-- Fri Feb 13 10:31:15 2015 -->
 <table border=1>
 <tr> <th> reference_name </th> <th> start </th> <th> end </th> <th> reference_bases </th> <th> alternate_bases </th> <th> call_call_set_name </th> <th> genotype </th>  </tr>
   <tr> <td> chr17 </td> <td align="right"> 41196363 </td> <td align="right"> 41196821 </td> <td> = </td> <td>  </td> <td> hu0E64A1 </td> <td> 0,0 </td> </tr>
@@ -149,17 +151,17 @@ SELECT
   MAX(LENGTH(reference_bases)) AS max_ref_len,
   MAX(LENGTH(alternate_bases)) AS max_alt_len
 FROM
-  [google.com:biggene:test.pgp_masterVar_20150205]
+  [google.com:biggene:test.pgp_variants_20150205]
 OMIT RECORD IF EVERY(alternate_bases IS NULL)
 GROUP BY
   alt_contains_no_special_characters
 ```
 
 <!-- html table generated in R 3.1.1 by xtable 1.7-4 package -->
-<!-- Fri Feb 13 10:13:14 2015 -->
+<!-- Fri Feb 13 10:31:18 2015 -->
 <table border=1>
 <tr> <th> number_of_variant_records </th> <th> alt_contains_no_special_characters </th> <th> max_ref_len </th> <th> max_alt_len </th>  </tr>
-  <tr> <td align="right"> 40166383 </td> <td> TRUE </td> <td align="right"> 198 </td> <td align="right"> 215 </td> </tr>
+  <tr> <td align="right"> 40284485 </td> <td> TRUE </td> <td align="right"> 198 </td> <td align="right"> 215 </td> </tr>
   <tr> <td align="right"> 2070037 </td> <td> FALSE </td> <td align="right"> 200 </td> <td align="right"> 191 </td> </tr>
    </table>
 We see from the query results that there are no special charaters in alternate_bases and the maximum length is ~50 base pairs.
@@ -184,7 +186,7 @@ FROM (
   SELECT
     GROUP_CONCAT(STRING(call.genotype)) WITHIN call AS genotype,
   FROM
-  [google.com:biggene:test.pgp_masterVar_20150205]
+  [google.com:biggene:test.pgp_variants_20150205]
   WHERE
     reference_name = 'chr17'
     AND start BETWEEN 41196311
@@ -197,18 +199,19 @@ ORDER BY
 ```
 
 <!-- html table generated in R 3.1.1 by xtable 1.7-4 package -->
-<!-- Fri Feb 13 10:13:18 2015 -->
+<!-- Fri Feb 13 10:31:20 2015 -->
 <table border=1>
 <tr> <th> genotype </th> <th> genotype_count </th>  </tr>
   <tr> <td> 0,0 </td> <td align="right"> 40485 </td> </tr>
   <tr> <td> -1,-1 </td> <td align="right"> 21781 </td> </tr>
   <tr> <td> 1,0 </td> <td align="right"> 10908 </td> </tr>
-  <tr> <td> 1,1 </td> <td align="right"> 4151 </td> </tr>
+  <tr> <td> 1,1 </td> <td align="right"> 4152 </td> </tr>
   <tr> <td> 1,-1 </td> <td align="right"> 2093 </td> </tr>
   <tr> <td> -1,0 </td> <td align="right"> 1008 </td> </tr>
   <tr> <td> 0,-1 </td> <td align="right"> 420 </td> </tr>
   <tr> <td> -1,1 </td> <td align="right">  87 </td> </tr>
   <tr> <td> 1,2 </td> <td align="right">  60 </td> </tr>
+  <tr> <td> 0,1 </td> <td align="right">   7 </td> </tr>
    </table>
 We see from the query results the variety of genotypes within BRCA1.
 
