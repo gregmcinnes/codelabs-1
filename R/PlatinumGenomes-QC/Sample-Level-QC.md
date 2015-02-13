@@ -32,10 +32,15 @@ In Part 3 of the codelab, we perform some quality control analyses that could he
 By default this codelab runs upon the Illumina Platinum Genomes Variants. Update the table and change the source of sample information here if you wish to run the queries against a different dataset.
 
 ```r
-tableReplacement <- list("_THE_TABLE_"="genomics-public-data:platinum_genomes.variants",
-                          "_THE_EXPANDED_TABLE_"="google.com:biggene:platinum_genomes.expanded_variants")
-sampleData <- read.csv("http://storage.googleapis.com/genomics-public-data/platinum-genomes/other/platinum_genomes_sample_info.csv")
-sampleInfo <- select(sampleData, call_call_set_name=Catalog.ID, gender=Gender)
+#tableReplacement <- list("_THE_TABLE_"="genomics-public-data:platinum_genomes.variants",
+#                          "_THE_EXPANDED_TABLE_"="google.com:biggene:platinum_genomes.expanded_variants")
+#sampleData <- read.csv("http://storage.googleapis.com/genomics-public-data/platinum-genomes/other/platinum_genomes_sample_info.csv")
+#sampleInfo <- select(sampleData, call_call_set_name=Catalog.ID, gender=Gender)
+
+tableReplacement <- list("_THE_TABLE_"="google.com:biggene:test.pgp_masterVar_20150205",
+                         "_THE_EXPANDED_TABLE_"="google.com:biggene:test.pgp_masterVar_20150205_expanded")
+sampleData <- read.csv(textConnection(getURL("https://my.pgp-hms.org/google_surveys/1/download")))
+sampleInfo <- select(sampleData, call_call_set_name=Participant, gender=Sex.Gender)
 ```
 
 ## Missingness Rate
@@ -68,7 +73,7 @@ FROM (
       call.call_set_name,
       SOME(call.genotype == -1) WITHIN call AS has_no_calls,
     FROM
-      [genomics-public-data:platinum_genomes.variants]
+      [google.com:biggene:test.pgp_masterVar_20150205]
     # Optionally add clause here to limit the query to a particular
     # region of the genome.
     #_WHERE_
@@ -78,19 +83,19 @@ FROM (
 ORDER BY
   call.call_set_name
 ```
-Number of rows returned by this query: 17.
+Number of rows returned by this query: 189.
 
 Displaying the first few results:
 <!-- html table generated in R 3.1.1 by xtable 1.7-4 package -->
-<!-- Thu Feb 12 17:45:24 2015 -->
+<!-- Fri Feb 13 10:13:32 2015 -->
 <table border=1>
 <tr> <th> call_call_set_name </th> <th> no_calls </th> <th> all_calls </th> <th> missingness_rate </th>  </tr>
-  <tr> <td> NA12877 </td> <td align="right"> 41927032 </td> <td align="right"> 2147483647 </td> <td align="right"> 0.01 </td> </tr>
-  <tr> <td> NA12878 </td> <td align="right"> 58122228 </td> <td align="right"> 2147483647 </td> <td align="right"> 0.02 </td> </tr>
-  <tr> <td> NA12879 </td> <td align="right"> 59224162 </td> <td align="right"> 2147483647 </td> <td align="right"> 0.02 </td> </tr>
-  <tr> <td> NA12880 </td> <td align="right"> 58539440 </td> <td align="right"> 2147483647 </td> <td align="right"> 0.02 </td> </tr>
-  <tr> <td> NA12881 </td> <td align="right"> 58261455 </td> <td align="right"> 2147483647 </td> <td align="right"> 0.02 </td> </tr>
-  <tr> <td> NA12882 </td> <td align="right"> 42249595 </td> <td align="right"> 2147483647 </td> <td align="right"> 0.01 </td> </tr>
+  <tr> <td> hu011C57 </td> <td align="right"> 487457352 </td> <td align="right"> 2147483647 </td> <td align="right"> 0.16 </td> </tr>
+  <tr> <td> hu016B28 </td> <td align="right"> 487637262 </td> <td align="right"> 2147483647 </td> <td align="right"> 0.16 </td> </tr>
+  <tr> <td> hu0211D6 </td> <td align="right"> 298979361 </td> <td align="right"> 2147483647 </td> <td align="right"> 0.10 </td> </tr>
+  <tr> <td> hu025CEA </td> <td align="right"> 292263830 </td> <td align="right"> 2147483647 </td> <td align="right"> 0.10 </td> </tr>
+  <tr> <td> hu032C04 </td> <td align="right"> 472162353 </td> <td align="right"> 2147483647 </td> <td align="right"> 0.15 </td> </tr>
+  <tr> <td> hu034DB1 </td> <td align="right"> 291058136 </td> <td align="right"> 2147483647 </td> <td align="right"> 0.10 </td> </tr>
    </table>
 
 And visualizing the results:
@@ -157,7 +162,7 @@ FROM (
             call.call_set_name,
             call.genotype,
           FROM
-            [genomics-public-data:platinum_genomes.variants]
+            [google.com:biggene:test.pgp_masterVar_20150205]
           # Optionally add a clause here to limit the query to a particular
           # region of the genome.
           #_WHERE_
@@ -181,19 +186,19 @@ GROUP BY
 ORDER BY
   private_variant_count DESC
 ```
-Number of rows returned by this query: 17.
+Number of rows returned by this query: 189.
 
 Displaying the first few results:
 <!-- html table generated in R 3.1.1 by xtable 1.7-4 package -->
-<!-- Thu Feb 12 17:45:27 2015 -->
+<!-- Fri Feb 13 10:13:36 2015 -->
 <table border=1>
 <tr> <th> call_call_set_name </th> <th> private_variant_count </th>  </tr>
-  <tr> <td> NA12890 </td> <td align="right"> 418760 </td> </tr>
-  <tr> <td> NA12892 </td> <td align="right"> 415630 </td> </tr>
-  <tr> <td> NA12889 </td> <td align="right"> 415513 </td> </tr>
-  <tr> <td> NA12891 </td> <td align="right"> 394767 </td> </tr>
-  <tr> <td> NA12881 </td> <td align="right"> 86565 </td> </tr>
-  <tr> <td> NA12878 </td> <td align="right"> 82767 </td> </tr>
+  <tr> <td> huC1F1FB-lfr </td> <td align="right"> 299000 </td> </tr>
+  <tr> <td> huC1F1FB </td> <td align="right"> 267717 </td> </tr>
+  <tr> <td> hu24A473-lfr </td> <td align="right"> 214548 </td> </tr>
+  <tr> <td> hu60180F </td> <td align="right"> 209021 </td> </tr>
+  <tr> <td> huD2B804-lfr </td> <td align="right"> 208323 </td> </tr>
+  <tr> <td> hu38168C </td> <td align="right"> 207803 </td> </tr>
    </table>
 
 And visualizing the results:
@@ -250,7 +255,7 @@ FROM (
         SUM(call.genotype = 1)/SUM(call.genotype >= 0),
         -1)  WITHIN RECORD AS freq
     FROM
-      [google.com:biggene:platinum_genomes.expanded_variants]
+      [google.com:biggene:test.pgp_masterVar_20150205_expanded]
     # Optionally add a clause here to limit the query to a particular
     # region of the genome.
     #_WHERE_
@@ -268,19 +273,19 @@ FROM (
 ORDER BY
   call.call_set_name
 ```
-Number of rows returned by this query: 17.
+Number of rows returned by this query: 189.
 
 Displaying the first few results:
 <!-- html table generated in R 3.1.1 by xtable 1.7-4 package -->
-<!-- Thu Feb 12 17:45:31 2015 -->
+<!-- Fri Feb 13 10:13:41 2015 -->
 <table border=1>
 <tr> <th> call_call_set_name </th> <th> O_HOM </th> <th> E_HOM </th> <th> N_SITES </th> <th> F </th>  </tr>
-  <tr> <td> NA12877 </td> <td align="right"> 6794394 </td> <td align="right"> 7988474.22 </td> <td align="right"> 10204968 </td> <td align="right"> -0.54 </td> </tr>
-  <tr> <td> NA12878 </td> <td align="right"> 6700705 </td> <td align="right"> 7955077.42 </td> <td align="right"> 10171953 </td> <td align="right"> -0.57 </td> </tr>
-  <tr> <td> NA12879 </td> <td align="right"> 6620470 </td> <td align="right"> 7933125.29 </td> <td align="right"> 10147411 </td> <td align="right"> -0.59 </td> </tr>
-  <tr> <td> NA12880 </td> <td align="right"> 6590387 </td> <td align="right"> 7929608.34 </td> <td align="right"> 10150696 </td> <td align="right"> -0.60 </td> </tr>
-  <tr> <td> NA12881 </td> <td align="right"> 6567127 </td> <td align="right"> 7935804.42 </td> <td align="right"> 10153820 </td> <td align="right"> -0.62 </td> </tr>
-  <tr> <td> NA12882 </td> <td align="right"> 6805829 </td> <td align="right"> 7965142.57 </td> <td align="right"> 10202639 </td> <td align="right"> -0.52 </td> </tr>
+  <tr> <td> hu011C57 </td> <td align="right"> 20173349 </td> <td align="right"> 20582756.09 </td> <td align="right"> 22217529 </td> <td align="right"> -0.25 </td> </tr>
+  <tr> <td> hu016B28 </td> <td align="right"> 20113776 </td> <td align="right"> 20526725.09 </td> <td align="right"> 22167207 </td> <td align="right"> -0.25 </td> </tr>
+  <tr> <td> hu0211D6 </td> <td align="right"> 20325580 </td> <td align="right"> 21283473.63 </td> <td align="right"> 22445105 </td> <td align="right"> -0.82 </td> </tr>
+  <tr> <td> hu025CEA </td> <td align="right"> 20592712 </td> <td align="right"> 21500535.71 </td> <td align="right"> 22655210 </td> <td align="right"> -0.79 </td> </tr>
+  <tr> <td> hu032C04 </td> <td align="right"> 20642055 </td> <td align="right"> 21148153.76 </td> <td align="right"> 22728231 </td> <td align="right"> -0.32 </td> </tr>
+  <tr> <td> hu034DB1 </td> <td align="right"> 20583027 </td> <td align="right"> 21516962.61 </td> <td align="right"> 22669386 </td> <td align="right"> -0.81 </td> </tr>
    </table>
 
 And visualizing the results:
@@ -336,7 +341,7 @@ FROM
       NTH(1, call.genotype) WITHIN call AS first_allele,
       NTH(2, call.genotype) WITHIN call AS second_allele,
     FROM
-      [google.com:biggene:platinum_genomes.expanded_variants]
+      [google.com:biggene:test.pgp_masterVar_20150205_expanded]
     WHERE
       reference_name = 'chrX'
       AND start NOT BETWEEN 59999 AND 2699519
@@ -352,19 +357,19 @@ FROM
 ORDER BY
   call.call_set_name
 ```
-Number of rows returned by this query: 17.
+Number of rows returned by this query: 189.
 
 Displaying the first few results:
 <!-- html table generated in R 3.1.1 by xtable 1.7-4 package -->
-<!-- Thu Feb 12 17:45:35 2015 -->
+<!-- Fri Feb 13 10:13:45 2015 -->
 <table border=1>
 <tr> <th> call_call_set_name </th> <th> perct_het_alt_in_snvs </th> <th> perct_hom_alt_in_snvs </th> <th> all_callable_sites </th> <th> hom_AA_count </th> <th> het_RA_count </th> <th> hom_RR_count </th> <th> all_snvs </th>  </tr>
-  <tr> <td> NA12877 </td> <td align="right"> 0.32 </td> <td align="right"> 0.68 </td> <td align="right"> 329461 </td> <td align="right"> 79721 </td> <td align="right"> 37317 </td> <td align="right"> 212423 </td> <td align="right"> 117038 </td> </tr>
-  <tr> <td> NA12878 </td> <td align="right"> 0.71 </td> <td align="right"> 0.29 </td> <td align="right"> 326950 </td> <td align="right"> 43626 </td> <td align="right"> 106398 </td> <td align="right"> 176926 </td> <td align="right"> 150024 </td> </tr>
-  <tr> <td> NA12879 </td> <td align="right"> 0.70 </td> <td align="right"> 0.30 </td> <td align="right"> 326052 </td> <td align="right"> 45636 </td> <td align="right"> 105711 </td> <td align="right"> 174705 </td> <td align="right"> 151347 </td> </tr>
-  <tr> <td> NA12880 </td> <td align="right"> 0.69 </td> <td align="right"> 0.31 </td> <td align="right"> 325288 </td> <td align="right"> 47237 </td> <td align="right"> 105768 </td> <td align="right"> 172283 </td> <td align="right"> 153005 </td> </tr>
-  <tr> <td> NA12881 </td> <td align="right"> 0.69 </td> <td align="right"> 0.31 </td> <td align="right"> 325437 </td> <td align="right"> 47424 </td> <td align="right"> 105386 </td> <td align="right"> 172627 </td> <td align="right"> 152810 </td> </tr>
-  <tr> <td> NA12882 </td> <td align="right"> 0.31 </td> <td align="right"> 0.69 </td> <td align="right"> 328200 </td> <td align="right"> 78797 </td> <td align="right"> 34911 </td> <td align="right"> 214492 </td> <td align="right"> 113708 </td> </tr>
+  <tr> <td> hu011C57 </td> <td align="right"> 1.00 </td> <td align="right"> 0.00 </td> <td align="right"> 69514 </td> <td align="right">   0 </td> <td align="right"> 69514 </td> <td align="right">   0 </td> <td align="right"> 69514 </td> </tr>
+  <tr> <td> hu016B28 </td> <td align="right"> 1.00 </td> <td align="right"> 0.00 </td> <td align="right"> 69259 </td> <td align="right">   0 </td> <td align="right"> 69259 </td> <td align="right">   0 </td> <td align="right"> 69259 </td> </tr>
+  <tr> <td> hu0211D6 </td> <td align="right"> 0.64 </td> <td align="right"> 0.36 </td> <td align="right"> 665269 </td> <td align="right"> 36812 </td> <td align="right"> 65620 </td> <td align="right"> 562837 </td> <td align="right"> 102432 </td> </tr>
+  <tr> <td> hu025CEA </td> <td align="right"> 0.61 </td> <td align="right"> 0.39 </td> <td align="right"> 669509 </td> <td align="right"> 38309 </td> <td align="right"> 59460 </td> <td align="right"> 571740 </td> <td align="right"> 97769 </td> </tr>
+  <tr> <td> hu032C04 </td> <td align="right"> 1.00 </td> <td align="right"> 0.00 </td> <td align="right"> 70995 </td> <td align="right">   0 </td> <td align="right"> 70995 </td> <td align="right">   0 </td> <td align="right"> 70995 </td> </tr>
+  <tr> <td> hu034DB1 </td> <td align="right"> 0.61 </td> <td align="right"> 0.39 </td> <td align="right"> 669256 </td> <td align="right"> 37946 </td> <td align="right"> 60089 </td> <td align="right"> 571221 </td> <td align="right"> 98035 </td> </tr>
    </table>
 
 Let's join this with the sample information:
@@ -408,12 +413,33 @@ Note that this `n^2` analysis is a cluster compute job instead of a BigQuery que
 
 ### Results
 
-This is hard-coded to Identity-By-State results for Platinum Genomes.
 
 ```r
-ibs <- read.table("./data/platinum-genomes-ibs.tsv",
+sampleIds <- c("hu03E3D2",
+              "hu03E3D2-lfr",
+              "hu040C0A",
+              "hu048c6D6",
+#              "hu0486D6-ilm",
+              "hu0486D6-lfr",
+              "hu04DF3C",
+              "hu04F220",
+              "hu050E9C",
+              "hu05FD49",
+              "hu085B6D",
+              "hu085B6D-lfr",
+              "hu24A473",
+              "hu24A473-lfr",
+              "hu34D5B9-1",
+              "hu34D5B9-2",
+              "hu6A01AF",
+              "hu6A01AF-lfr",
+              "huC1F1FB",
+              "huC1F1FB-lfr",
+              "huD2B804",
+              "huD2B804-lfr")
+ibs <- read.table("./data/personal-genome-project-ibs.tsv",
                   col.names=c("sample1", "sample2", "ibsScore", "similar", "observed"))
-ggplot(ibs) +
+ggplot(filter(ibs, sample1 %in% sampleIds & sample2 %in% sampleIds)) +
   geom_tile(aes(x=sample1, y=sample2, fill=ibsScore), colour="white") +
   scale_fill_gradient(low="white", high="steelblue",
                       na.value="black", trans="log",

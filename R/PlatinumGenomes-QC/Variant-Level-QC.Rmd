@@ -41,12 +41,16 @@ In Part 4 of the codelab, we perform some quality control analyses that could he
 
 By default this codelab runs upon the Illumina Platinum Genomes Variants. Update the table and change the source of sample information here if you wish to run the queries against a different dataset.
 ```{r}
-tableReplacement <- list("_THE_TABLE_"="genomics-public-data:platinum_genomes.variants",
-                          "_THE_EXPANDED_TABLE_"="google.com:biggene:platinum_genomes.expanded_variants")
-sampleData <- read.csv("http://storage.googleapis.com/genomics-public-data/platinum-genomes/other/platinum_genomes_sample_info.csv")
-sampleInfo <- select(sampleData, call_call_set_name=Catalog.ID, gender=Gender)
-```
+#tableReplacement <- list("_THE_TABLE_"="genomics-public-data:platinum_genomes.variants",
+#                          "_THE_EXPANDED_TABLE_"="google.com:biggene:platinum_genomes.expanded_variants")
+#sampleData <- read.csv("http://storage.googleapis.com/genomics-public-data/platinum-genomes/other/platinum_genomes_sample_info.csv")
+#sampleInfo <- select(sampleData, call_call_set_name=Catalog.ID, gender=Gender)
 
+tableReplacement <- list("_THE_TABLE_"="google.com:biggene:test.pgp_masterVar_20150205",
+                         "_THE_EXPANDED_TABLE_"="google.com:biggene:test.pgp_masterVar_20150205_expanded")
+sampleData <- read.csv(textConnection(getURL("https://my.pgp-hms.org/google_surveys/1/download")))
+sampleInfo <- select(sampleData, call_call_set_name=Participant, gender=Sex.Gender)
+```
 ## Ti/Tv by Genomic Window
 
 Check whether the ratio of transitions vs. transversions in SNPs appears to be reasonable in each window of genomic positions.  This query may help identify problematic regions.
