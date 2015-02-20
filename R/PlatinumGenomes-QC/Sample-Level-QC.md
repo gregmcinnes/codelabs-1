@@ -41,6 +41,32 @@ tableReplacement <- list("_THE_TABLE_"="google.com:biggene:test.pgp_masterVar_20
                          "_THE_EXPANDED_TABLE_"="google.com:biggene:test.pgp_masterVar_20150205_expanded")
 sampleData <- read.csv(textConnection(getURL("https://my.pgp-hms.org/google_surveys/1/download")))
 sampleInfo <- select(sampleData, call_call_set_name=Participant, gender=Sex.Gender)
+
+sampleIds <- c("hu03E3D2",
+              "hu03E3D2-lfr",
+              "hu040C0A",
+              "hu048c6D6",
+#              "hu0486D6-ilm",
+              "hu0486D6-lfr",
+              "hu04DF3C",
+              "hu04F220",
+              "hu050E9C",
+              "hu05FD49",
+              "hu085B6D",
+              "hu085B6D-lfr",
+              "hu24A473",
+              "hu24A473-lfr",
+              "hu34D5B9-1",
+              "hu34D5B9-2",
+              "hu6A01AF",
+              "hu6A01AF-lfr",
+              "huC1F1FB",
+              "huC1F1FB-lfr",
+              "huD2B804",
+              "huD2B804-lfr")
+ibs <- read.table("./data/personal-genome-project-ibs.tsv",
+                  col.names=c("sample1", "sample2", "ibsScore", "similar", "observed"))
+ibs <- filter(ibs, sample1 %in% sampleIds & sample2 %in% sampleIds)
 ```
 
 ## Missingness Rate
@@ -82,12 +108,13 @@ FROM (
     call.call_set_name)
 ORDER BY
   call.call_set_name
+Running query:   RUNNING  2.5sRunning query:   RUNNING  3.1s
 ```
 Number of rows returned by this query: 189.
 
 Displaying the first few results:
-<!-- html table generated in R 3.1.1 by xtable 1.7-4 package -->
-<!-- Tue Feb 17 12:05:53 2015 -->
+<!-- html table generated in R 3.1.2 by xtable 1.7-4 package -->
+<!-- Thu Feb 19 17:38:47 2015 -->
 <table border=1>
 <tr> <th> call_call_set_name </th> <th> no_calls </th> <th> all_calls </th> <th> missingness_rate </th>  </tr>
   <tr> <td> hu011C57 </td> <td align="right"> 487457352 </td> <td align="right"> 2147483647 </td> <td align="right"> 0.16 </td> </tr>
@@ -104,7 +131,8 @@ And visualizing the results:
 ggplot(result) +
   geom_point(aes(x=call_call_set_name, y=missingness_rate)) +
   theme(axis.text.x=if(nrow(result) <= 20)
-    {element_text(angle = 90, hjust = 1)} else {element_blank()}) +
+    {element_text(angle=50, hjust=1)} else {element_blank()}) +
+  scale_y_continuous(labels = percent_format()) +
   xlab("Sample") +
   ylab("Missingness Rate") +
   ggtitle("Genome-Specific Missingness")
@@ -185,12 +213,13 @@ GROUP BY
   call.call_set_name
 ORDER BY
   private_variant_count DESC
+Running query:   RUNNING  2.6sRunning query:   RUNNING  3.2sRunning query:   RUNNING  3.8sRunning query:   RUNNING  4.4sRunning query:   RUNNING  5.0sRunning query:   RUNNING  5.8sRunning query:   RUNNING  6.4sRunning query:   RUNNING  7.0sRunning query:   RUNNING  7.6sRunning query:   RUNNING  8.2sRunning query:   RUNNING  8.8s
 ```
 Number of rows returned by this query: 189.
 
 Displaying the first few results:
-<!-- html table generated in R 3.1.1 by xtable 1.7-4 package -->
-<!-- Tue Feb 17 12:05:56 2015 -->
+<!-- html table generated in R 3.1.2 by xtable 1.7-4 package -->
+<!-- Thu Feb 19 17:39:01 2015 -->
 <table border=1>
 <tr> <th> call_call_set_name </th> <th> private_variant_count </th>  </tr>
   <tr> <td> huC1F1FB-lfr </td> <td align="right"> 299000 </td> </tr>
@@ -207,7 +236,8 @@ And visualizing the results:
 ggplot(result) +
   geom_point(aes(x=call_call_set_name, y=private_variant_count)) +
   theme(axis.text.x=if(nrow(result) <= 20)
-    {element_text(angle = 90, hjust = 1)} else {element_blank()}) +
+    {element_text(angle=50, hjust=1)} else {element_blank()}) +
+  scale_y_continuous(labels=comma) +
   xlab("Sample") +
   ylab("Number of Singletons") +
   ggtitle("Count of Singletons Per Genome")
@@ -272,12 +302,13 @@ FROM (
     )
 ORDER BY
   call.call_set_name
+Running query:   RUNNING  2.6sRunning query:   RUNNING  3.2sRunning query:   RUNNING  3.9sRunning query:   RUNNING  4.4sRunning query:   RUNNING  5.0sRunning query:   RUNNING  5.7sRunning query:   RUNNING 11.3sRunning query:   RUNNING 12.0sRunning query:   RUNNING 12.6sRunning query:   RUNNING 13.2sRunning query:   RUNNING 14.5s
 ```
 Number of rows returned by this query: 189.
 
 Displaying the first few results:
-<!-- html table generated in R 3.1.1 by xtable 1.7-4 package -->
-<!-- Tue Feb 17 12:06:00 2015 -->
+<!-- html table generated in R 3.1.2 by xtable 1.7-4 package -->
+<!-- Thu Feb 19 17:39:20 2015 -->
 <table border=1>
 <tr> <th> call_call_set_name </th> <th> O_HOM </th> <th> E_HOM </th> <th> N_SITES </th> <th> F </th>  </tr>
   <tr> <td> hu011C57 </td> <td align="right"> 20173349 </td> <td align="right"> 20582756.09 </td> <td align="right"> 22217529 </td> <td align="right"> -0.25 </td> </tr>
@@ -291,8 +322,13 @@ Displaying the first few results:
 And visualizing the results:
 
 ```r
+limits <- c(min(result$O_HOM, result$E_HOM),
+            max(result$O_HOM, result$E_HOM))
 ggplot(result) +
-  geom_text(aes(x=O_HOM, y=E_HOM, label=call_call_set_name), hjust=-1, vjust=0) +
+  geom_text(aes(x=O_HOM, y=E_HOM, label=call_call_set_name), alpha=1/1.5, hjust=-1, vjust=0) +
+  geom_abline(color="darkslateblue") +
+  scale_x_continuous(limits=limits, labels=comma) +
+  scale_y_continuous(limits=limits, labels=comma) +
   xlab("Observed Homozygous Variants") +
   ylab("Expected Homozygous Variants") +
   ggtitle("Homozygosity")
@@ -346,14 +382,13 @@ GROUP BY
   call.call_set_name
 ORDER BY
   call.call_set_name
-
-Running query:   RUNNING  2.0s
+Running query:   RUNNING  2.5sRunning query:   RUNNING  3.1sRunning query:   RUNNING  3.7s
 ```
 Number of rows returned by this query: 189.
 
 Displaying the first few results:
-<!-- html table generated in R 3.1.1 by xtable 1.7-4 package -->
-<!-- Tue Feb 17 12:06:08 2015 -->
+<!-- html table generated in R 3.1.2 by xtable 1.7-4 package -->
+<!-- Thu Feb 19 17:39:28 2015 -->
 <table border=1>
 <tr> <th> call_call_set_name </th> <th> perct_het_alt_in_snvs </th> <th> perct_hom_alt_in_snvs </th> <th> hom_AA_count </th> <th> het_RA_count </th> <th> hom_RR_count </th>  </tr>
   <tr> <td> hu011C57 </td> <td align="right"> 0.00 </td> <td align="right"> 1.00 </td> <td align="right"> 69514 </td> <td align="right">   0 </td> <td align="right"> 665647 </td> </tr>
@@ -376,7 +411,8 @@ And visualize the results:
 ggplot(joinedResult) +
   geom_point(aes(x=call_call_set_name, y=perct_het_alt_in_snvs, color=gender)) +
   theme(axis.text.x=if(nrow(result) <= 20)
-    {element_text(angle = 90, hjust = 1)} else {element_blank()}) +
+    {element_text(angle=50, hjust=1)} else {element_blank()}) +
+  scale_y_continuous(labels = percent_format()) +
   xlab("Sample") +
   ylab("Heterozygosity Rate ") +
   ggtitle("Heterozygosity Rate on the X Chromosome")
@@ -407,36 +443,12 @@ Note that this `n^2` analysis is a cluster compute job instead of a BigQuery que
 
 
 ```r
-sampleIds <- c("hu03E3D2",
-              "hu03E3D2-lfr",
-              "hu040C0A",
-              "hu048c6D6",
-#              "hu0486D6-ilm",
-              "hu0486D6-lfr",
-              "hu04DF3C",
-              "hu04F220",
-              "hu050E9C",
-              "hu05FD49",
-              "hu085B6D",
-              "hu085B6D-lfr",
-              "hu24A473",
-              "hu24A473-lfr",
-              "hu34D5B9-1",
-              "hu34D5B9-2",
-              "hu6A01AF",
-              "hu6A01AF-lfr",
-              "huC1F1FB",
-              "huC1F1FB-lfr",
-              "huD2B804",
-              "huD2B804-lfr")
-ibs <- read.table("./data/personal-genome-project-ibs.tsv",
-                  col.names=c("sample1", "sample2", "ibsScore", "similar", "observed"))
-ggplot(filter(ibs, sample1 %in% sampleIds & sample2 %in% sampleIds)) +
+ggplot(ibs) +
   geom_tile(aes(x=sample1, y=sample2, fill=ibsScore), colour="white") +
   scale_fill_gradient(low="white", high="steelblue",
                       na.value="black", trans="log",
                       guide=guide_colourbar(title= "IBS Score")) +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  theme(axis.text.x=element_text(angle=50, hjust=1)) +
   xlab("Sample 1") +
   ylab("Sample 2") +
   ggtitle("Identity By State (IBS) Heat Map")
@@ -473,12 +485,16 @@ gsutil cat gs://YOUR-BUCKET/output/platinum-genomes-ibs.tsv* | sort > platinum-g
 
 # Removing Genomes from the Cohort
 
-To remove a genome from a variant set in the Genomics API:
-* See the [callsets delete](https://cloud.google.com/genomics/v1beta2/reference/callsets/delete) method.
-* To delete a callset using a command line tool, see the the `deletecallset` command in [api-client-java](http://github.com/googlegenomics/api-client-java).
-
 To only remove a genome from BigQuery only:
 * Re-export the table to BigQuery using the `--call_set_id` flag on the `exportvariants` command in [api-client-java](http://github.com/googlegenomics/api-client-java) to list which callsets to _include_ in the export.
+
+To exclude a genome from data returned by the Genomics API:
+* See the `callSetIds` property on the [variants search](https://cloud.google.com/genomics/v1beta2/reference/variants/search) method.
+
+To entirely remove a genome from a variant set in the Genomics API:
+* See the [callsets delete](https://cloud.google.com/genomics/v1beta2/reference/callsets/delete) method.
+* To delete a callset using a command line tool, see the the `deletecallset` command in [api-client-java](http://github.com/googlegenomics/api-client-java).
+* *Note:* deletion cannot be undone.
 
 --------------------------------------------------------
 _Next_: [Part 4: Variant-Level QC](./Variant-Level-QC.md)
