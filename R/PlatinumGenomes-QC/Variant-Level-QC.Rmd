@@ -71,8 +71,10 @@ print(xtable(head(result)), type="html", include.rownames=F)
 
 Visualizing the results:
 ```{r titvByWindow, fig.align="center", fig.width=10, message=FALSE, comment=NA}
-ggplot(result) +
-  geom_point(aes(x=window_start, y=titv)) +
+ggplot(result, aes(x=window_start, y=titv)) +
+  geom_point() +
+  stat_smooth() +
+  scale_x_continuous(labels=comma) +
   xlab("Genomic Position") +
   ylab("Ti/Tv") +
   ggtitle("Ti/Tv by 100,000 base pair windows on Chromosome 1")
@@ -96,8 +98,10 @@ print(xtable(head(result)), type="html", include.rownames=F)
 
 Visualizing the results:
 ```{r titvByAlt, fig.align="center", fig.width=10, message=FALSE, comment=NA}
-ggplot(result) +
-  geom_point(aes(x=alternate_allele_count, y=titv)) +
+ggplot(result, aes(x=alternate_allele_count, y=titv)) +
+  geom_point() +
+  stat_smooth() +
+  scale_x_continuous(labels=comma) +
   xlab("Total Number of Sample Alleles with the Variant") +
   ylab("Ti/Tv") +
   ggtitle("Ti/Tv by Alternate Allele Count")
@@ -164,13 +168,14 @@ print(xtable(head(result)), type="html", include.rownames=F)
 
 # Removing variants from the Cohort
 
-To remove a variant from a variant set in the Genomics API:
-* See the [variant delete](https://cloud.google.com/genomics/v1beta2/reference/variants/delete) method.
-
-To instead mark a variant as problematic so that downstream analyses can filter it out:
-* See the [variant update](https://cloud.google.com/genomics/v1beta2/reference/variants/update) method
+To mark a variant as problematic so that downstream analyses can filter it out:
+* See the [variant update](https://cloud.google.com/genomics/v1beta2/reference/variants/update) method.
 
 To remove variants from BigQuery only:
 * Materialize the results of queries that include the non-problematic variants to a new table.
 * Alternatively, write a custom filtering job similar to what we explored in [Part 2: Data Conversion](./Data-Conversion.md) of this codelab.
 
+To entirely remove a variant from a variant set in the Genomics API:
+* See the [variant delete](https://cloud.google.com/genomics/v1beta2/reference/variants/delete) method.
+* *Note:* deletion cannot be undone.
+* If you wish to copy a variant to a different variantSet prior to deleting it, see the [variantSet mergeVariants](https://cloud.google.com/genomics/v1beta2/reference/variantsets/mergeVariants) method.
